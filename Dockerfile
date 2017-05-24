@@ -1,5 +1,5 @@
 FROM nginx:latest
-COPY nginx.conf /etc/nginx/
+COPY default.conf /etc/nginx/conf.d/
 COPY index.html /usr/share/nginx/html/
 COPY content.json /usr/share/nginx/html/
 RUN /usr/sbin/nginx -t
