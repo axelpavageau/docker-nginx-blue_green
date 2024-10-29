@@ -6,12 +6,11 @@ on:
   pull_request:
     branches: ["master"]
 
-env:
-  TEST_TAG: axelpavageau/nginx-blue:test
-  LATEST_TAG: axelpavageau/nginx-blue:latest
-
 jobs:
   docker:
+    strategy:
+      matrix:
+        color: [blue, green]
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -30,13 +29,15 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           load: true
-          tags: ${{ env.TEST_TAG }}
+          tags: axelpavageau/nginx-${{ matrix.color }}:test
+          build-args: |
+            COLOR=${{ matrix.color }}
 
       - name: Test
         run: |
-          docker run -d --name test-container ${{ env.TEST_TAG }}
+          docker run -d --name test-container axelpavageau/nginx-${{ matrix.color }}:test
           docker ps -a
-          docker exec test-container curl localhost
+          docker exec test-container sh -c "curl -s localhost | grep ${{ matrix.color }}"
           docker stop test-container
           docker rm test-container
 
@@ -45,4 +46,6 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ env.LATEST_TAG }}
+          tags: axelpavageau/nginx-${{ matrix.color }}:latest
+          build-args: |
+            COLOR=${{ matrix.color }}
