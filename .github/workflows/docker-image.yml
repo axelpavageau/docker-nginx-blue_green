@@ -37,7 +37,7 @@ jobs:
         run: |
           docker run -d --name test-container axelpavageau/nginx-${{ matrix.color }}:test
           docker ps -a
-          docker exec test-container curl localhost
+          docker exec test-container sh -c "curl -s localhost | grep ${{ matrix.color }}"
           docker stop test-container
           docker rm test-container
 
