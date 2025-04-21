@@ -1,4 +1,4 @@
-FROM nginx:1.27.4
+FROM nginx:1.27.5
 
 ARG COLOR
 ARG COLOR_CODE
